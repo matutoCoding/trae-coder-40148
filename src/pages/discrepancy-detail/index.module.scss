@@ -1,0 +1,263 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: $spacing-md $page-padding;
+  padding-bottom: 100rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-error 0%, #FF7875 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+}
+
+.diffAmount {
+  font-size: 56rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.typeBadge {
+  display: inline-block;
+  padding: 6rpx 24rpx;
+  border-radius: $radius-button;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.typeText {
+  font-size: $font-size-sm;
+  color: $color-text-white;
+}
+
+.section {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  max-width: 60%;
+}
+
+.compareSection {
+  margin-top: $spacing-md;
+}
+
+.compareRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md 0;
+  border-bottom: 1px solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.compareItem {
+  flex: 1;
+  text-align: center;
+}
+
+.compareLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-xs;
+}
+
+.compareValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.platformValue {
+  color: $color-primary;
+}
+
+.teamValue {
+  color: #165DFF;
+}
+
+.vsIcon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: $color-bg-hover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-bold;
+  margin: 0 $spacing-sm;
+}
+
+.statusSection {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-divider;
+}
+
+.statusBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.statusIcon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+}
+
+.pending {
+  background: $color-warning;
+}
+
+.resolved {
+  background: $color-success;
+}
+
+.approved {
+  background: $color-primary;
+}
+
+.statusText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.handleInfo {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  line-height: 1.6;
+}
+
+.handleRemark {
+  margin-top: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.planCard {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: linear-gradient(135deg, #F0F5FF 0%, #E8F0FF 100%);
+  border-radius: $radius-md;
+  border-left: 6rpx solid #165DFF;
+}
+
+.planTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.planDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: $spacing-sm;
+}
+
+.planMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.planAmount {
+  color: $color-error;
+  font-weight: $font-weight-semibold;
+}
+
+.actionBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc(#{$spacing-md} + env(safe-area-inset-bottom));
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.actionBtn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+.primaryBtn {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+}
+
+.secondaryBtn {
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+}

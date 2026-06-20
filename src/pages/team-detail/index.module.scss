@@ -1,0 +1,223 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 140rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-xl $page-padding;
+  padding-top: 80rpx;
+}
+
+.teamInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: $radius-lg;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: $spacing-lg;
+  border: 4rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.avatarText {
+  font-size: 48rpx;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+}
+
+.teamDetail {
+  flex: 1;
+}
+
+.teamName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.leaderName {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.statusBadge {
+  padding: 6rpx 20rpx;
+  border-radius: $radius-button;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.statusText {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+}
+
+.statsRow {
+  display: flex;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-lg;
+  padding: $spacing-md 0;
+}
+
+.statItem {
+  flex: 1;
+  text-align: center;
+
+  &:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+.statValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.content {
+  padding: $spacing-md $page-padding;
+}
+
+.section {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.descText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.8;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.listTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.viewMore {
+  font-size: $font-size-sm;
+  color: $color-primary;
+}
+
+.scheduleItem {
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.scheduleDate {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  margin-bottom: 4rpx;
+}
+
+.scheduleCouple {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.actionBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: $spacing-md;
+  z-index: 100;
+}
+
+.btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+.btnPrimary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+}
+
+.btnSecondary {
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+}

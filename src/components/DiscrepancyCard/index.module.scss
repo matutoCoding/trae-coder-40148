@@ -1,0 +1,138 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.typeIcon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: $spacing-md;
+}
+
+.iconText {
+  font-size: $font-size-lg;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+}
+
+.typeInfo {
+  flex: 1;
+}
+
+.typeText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.date {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.statusTag {
+  font-size: $font-size-xs;
+  padding: 6rpx 16rpx;
+  border-radius: $radius-sm;
+  font-weight: $font-weight-medium;
+}
+
+.description {
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+}
+
+.descText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.amountRow {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-md 0;
+  border-top: 1px solid $color-divider;
+  border-bottom: 1px solid $color-divider;
+  margin-bottom: $spacing-md;
+}
+
+.amountItem {
+  flex: 1;
+  text-align: center;
+
+  &:not(:last-child) {
+    border-right: 1px solid $color-divider;
+  }
+}
+
+.amountLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.amountValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.diffItem {
+  flex: 1;
+  text-align: center;
+}
+
+.diffLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.diffValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-error;
+}
+
+.handler {
+  display: flex;
+  align-items: center;
+}
+
+.handlerLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.handlerName {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}

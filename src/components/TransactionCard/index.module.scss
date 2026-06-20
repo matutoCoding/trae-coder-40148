@@ -1,0 +1,151 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-divider;
+}
+
+.orderInfo {
+  flex: 1;
+}
+
+.orderNo {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.date {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.reconcileTag {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 6rpx 16rpx;
+  border-radius: $radius-sm;
+}
+
+.reconcileIcon {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.reconcileText {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.matched {
+  background: rgba(0, 180, 42, 0.1);
+
+  .reconcileIcon,
+  .reconcileText {
+    color: $color-success;
+  }
+}
+
+.discrepancy {
+  background: rgba(245, 63, 63, 0.1);
+
+  .reconcileIcon,
+  .reconcileText {
+    color: $color-error;
+  }
+}
+
+.pending {
+  background: rgba(255, 125, 0, 0.1);
+
+  .reconcileIcon,
+  .reconcileText {
+    color: $color-warning;
+  }
+}
+
+.content {
+  margin-bottom: $spacing-md;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.label {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.value {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  max-width: 60%;
+  @include text-ellipsis;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-divider;
+}
+
+.typeTag {
+  background: $color-bg-secondary;
+  padding: 6rpx 16rpx;
+  border-radius: $radius-sm;
+}
+
+.typeText {
+  font-size: $font-size-xs;
+  color: $color-warning;
+  font-weight: $font-weight-medium;
+}
+
+.amountWrapper {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-sm;
+}
+
+.amountLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.amount {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}

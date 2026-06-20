@@ -1,0 +1,243 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: $spacing-md $page-padding;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  margin-bottom: $spacing-lg;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.statsCards {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statCard {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  text-align: center;
+}
+
+.statValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.matched {
+  .statValue {
+    color: $color-success;
+  }
+}
+
+.discrepancy {
+  .statValue {
+    color: $color-error;
+  }
+}
+
+.pending {
+  .statValue {
+    color: $color-warning;
+  }
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  box-shadow: 0 4rpx 20rpx rgba(212, 56, 60, 0.2);
+}
+
+.summaryTitle {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.summaryAmount {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: $spacing-sm;
+}
+
+.summaryInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-top: $spacing-md;
+}
+
+.summaryItem {
+  flex: 1;
+  text-align: center;
+
+  &:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+.summaryItemValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.summaryItemLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tabs {
+  display: flex;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xs;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: $spacing-md 0;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+}
+
+.activeTab {
+  background: $color-primary;
+  color: $color-text-white;
+  font-weight: $font-weight-semibold;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.moreText {
+  font-size: $font-size-sm;
+  color: $color-primary;
+}
+
+.discrepancyList {
+  margin-bottom: $spacing-lg;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.listTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.viewAll {
+  font-size: $font-size-sm;
+  color: $color-primary;
+}
+
+.emptyState {
+  text-align: center;
+  padding: $spacing-xl * 2 0;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+}
+
+.emptyIcon {
+  font-size: 80rpx;
+  margin-bottom: $spacing-md;
+}
+
+.emptyText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.quickActions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.actionCard {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.actionIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-sm;
+}
+
+.actionIconText {
+  font-size: 36rpx;
+}
+
+.actionText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}

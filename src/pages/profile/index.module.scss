@@ -1,0 +1,167 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-xl $page-padding;
+  padding-top: 80rpx;
+  position: relative;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+}
+
+.avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: $spacing-lg;
+  border: 4rpx solid rgba(255, 255, 255, 0.4);
+}
+
+.avatarText {
+  font-size: 48rpx;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+}
+
+.userDetail {
+  flex: 1;
+}
+
+.userName {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.userRole {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.statsRow {
+  display: flex;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-lg;
+  padding: $spacing-lg 0;
+}
+
+.statItem {
+  flex: 1;
+  text-align: center;
+
+  &:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+.statNumber {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.menuSection {
+  margin: 0 $page-padding;
+  margin-top: -32rpx;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  padding: $spacing-xs 0;
+  margin-bottom: $spacing-lg;
+}
+
+.menuTitle {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: $spacing-xs;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  transition: background $transition-fast;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.menuIcon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: $spacing-md;
+  font-size: 28rpx;
+}
+
+.menuContent {
+  flex: 1;
+}
+
+.menuText {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.menuArrow {
+  font-size: $font-size-lg;
+  color: $color-text-tertiary;
+}
+
+.badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  border-radius: 16rpx;
+  background: $color-error;
+  color: $color-text-white;
+  font-size: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8rpx;
+}
+
+.iconWrapper {
+  position: relative;
+}
+
+.bottomTip {
+  text-align: center;
+  padding: $spacing-lg 0;
+}
+
+.tipText {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}

@@ -1,0 +1,135 @@
+@use '@/styles/variables.scss' as *;
+
+.calendar {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.navBtn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: $color-text-secondary;
+  font-weight: $font-weight-bold;
+}
+
+.monthTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.weekHeader {
+  display: flex;
+  margin-bottom: $spacing-sm;
+}
+
+.weekDay {
+  flex: 1;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  padding: $spacing-sm 0;
+}
+
+.daysGrid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.dayCell {
+  width: calc(100% / 7);
+  height: 88rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: $radius-sm;
+  transition: all $transition-fast;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.dayNumber {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.otherMonth {
+  .dayNumber {
+    color: $color-text-disabled;
+  }
+}
+
+.today {
+  .dayNumber {
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 8rpx;
+    width: 8rpx;
+    height: 8rpx;
+    border-radius: 50%;
+    background: $color-primary;
+  }
+}
+
+.occupied {
+  background: rgba(212, 56, 60, 0.1);
+
+  .dayNumber {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.partial {
+  background: rgba(255, 125, 0, 0.1);
+
+  .dayNumber {
+    color: $color-warning;
+  }
+}
+
+.scheduleDots {
+  display: flex;
+  gap: 4rpx;
+  margin-top: 4rpx;
+  align-items: center;
+}
+
+.dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: $color-primary;
+}
+
+.mergedDot {
+  background: $color-schedule-merged;
+}
+
+.moreText {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+}

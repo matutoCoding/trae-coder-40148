@@ -1,0 +1,115 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: $shadow-card-hover;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-divider;
+}
+
+.coupleInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.coupleName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.statusTag {
+  font-size: $font-size-xs;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+}
+
+.mergedTag {
+  background: linear-gradient(135deg, $color-schedule-merged 0%, #9D8CFF 100%);
+  padding: 6rpx 16rpx;
+  border-radius: $radius-sm;
+}
+
+.mergedText {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.content {
+  margin-bottom: $spacing-md;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.label {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.value {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-divider;
+}
+
+.amountInfo,
+.depositInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.amountLabel,
+.depositLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 4rpx;
+}
+
+.amount {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.deposit {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-secondary;
+}

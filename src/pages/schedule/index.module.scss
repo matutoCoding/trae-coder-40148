@@ -1,0 +1,221 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: $spacing-md $page-padding;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  margin-bottom: $spacing-lg;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.statsBar {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statCard {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  text-align: center;
+}
+
+.statNumber {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.teamFilter {
+  margin-bottom: $spacing-lg;
+}
+
+.filterLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  display: block;
+}
+
+.teamTabs {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.teamTab {
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-button;
+  background: $color-bg-card;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+  transition: all $transition-fast;
+}
+
+.activeTab {
+  background: $color-primary;
+  color: $color-text-white;
+  border-color: $color-primary;
+}
+
+.calendarSection {
+  margin-bottom: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.legend {
+  display: flex;
+  gap: $spacing-lg;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-lg;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.legendDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+}
+
+.free {
+  background: $color-success;
+}
+
+.occupied {
+  background: $color-primary;
+}
+
+.merged {
+  background: $color-schedule-merged;
+}
+
+.legendText {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.selectedDateSection {
+  margin-bottom: $spacing-lg;
+}
+
+.selectedDateHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.selectedDateTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.addBtn {
+  padding: $spacing-sm $spacing-md;
+  background: $color-primary;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  border-radius: $radius-button;
+}
+
+.scheduleList {
+  //
+}
+
+.emptyState {
+  text-align: center;
+  padding: $spacing-xl 0;
+}
+
+.emptyIcon {
+  font-size: 80rpx;
+  margin-bottom: $spacing-md;
+}
+
+.emptyText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.quickActions {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.actionCard {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.actionIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-md;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-sm;
+}
+
+.actionIconText {
+  font-size: 40rpx;
+  color: $color-text-white;
+}
+
+.actionText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}

@@ -1,0 +1,149 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: $spacing-md $page-padding;
+  padding-bottom: 100rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+}
+
+.amount {
+  font-size: 56rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 6rpx 24rpx;
+  border-radius: $radius-button;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.statusText {
+  font-size: $font-size-sm;
+  color: $color-text-white;
+}
+
+.section {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  max-width: 60%;
+}
+
+.reconcileSection {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-divider;
+}
+
+.reconcileStatus {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.reconcileIcon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+}
+
+.matched {
+  background: $color-success;
+}
+
+.discrepancy {
+  background: $color-error;
+}
+
+.pending {
+  background: $color-warning;
+}
+
+.reconcileText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+}
+
+.reconcileDesc {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  line-height: 1.6;
+}
+
+.actionBtn {
+  width: 100%;
+  height: 88rpx;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  margin-top: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+.secondaryBtn {
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  margin-top: $spacing-sm;
+}

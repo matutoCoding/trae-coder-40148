@@ -1,0 +1,164 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: $spacing-md $page-padding;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+}
+
+.coupleName {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: $spacing-sm;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 6rpx 20rpx;
+  border-radius: $radius-button;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.statusText {
+  font-size: $font-size-sm;
+  color: $color-text-white;
+}
+
+.amountRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-lg;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.amountItem {
+  text-align: center;
+}
+
+.amountValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.amountLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.section {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.mergedInfo {
+  background: linear-gradient(135deg, rgba(123, 97, 255, 0.1) 0%, rgba(157, 140, 255, 0.1) 100%);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  border: 1px solid rgba(123, 97, 255, 0.2);
+}
+
+.mergedTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-schedule-merged;
+  margin-bottom: $spacing-sm;
+}
+
+.mergedDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.actionBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: $spacing-md;
+  z-index: 100;
+}
+
+.btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+.btnPrimary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+}
+
+.btnSecondary {
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+}
+
+.btnDanger {
+  background: #fff1f0;
+  color: $color-error;
+  border: 1px solid #ffccc7;
+}
