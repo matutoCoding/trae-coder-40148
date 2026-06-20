@@ -3,8 +3,8 @@ import { View, Text, ScrollView } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import Calendar from '@/components/Calendar';
 import ScheduleCard from '@/components/ScheduleCard';
-import { mockSchedules, mockMergedGroups } from '@/data/schedule';
-import { mockTeams } from '@/data/team';
+import { useAppStore } from '@/store';
+import { getMergedGroups } from '@/utils/merge';
 import { Schedule } from '@/types';
 import { formatMoney } from '@/utils/date';
 import styles from './index.module.scss';
@@ -13,7 +13,9 @@ const SchedulePage: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date('2026-06-01'));
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('2026-06-22');
-  const [schedules, setSchedules] = useState<Schedule[]>(mockSchedules);
+
+  const schedules = useAppStore(state => state.schedules);
+  const teams = useAppStore(state => state.teams);
 
   useDidShow(() => {
     console.log('[SchedulePage] 页面显示');
@@ -58,7 +60,8 @@ const SchedulePage: React.FC = () => {
     });
 
     const totalAmount = monthSchedules.reduce((sum, s) => sum + s.amount, 0);
-    const mergedCount = mockMergedGroups.filter(g => {
+    const mergedGroups = getMergedGroups(filteredSchedules);
+    const mergedCount = mergedGroups.filter(g => {
       const startDate = new Date(g.startDate);
       return startDate.getFullYear() === currentMonth.getFullYear() &&
              startDate.getMonth() === currentMonth.getMonth();
@@ -73,7 +76,6 @@ const SchedulePage: React.FC = () => {
 
   const handleDateClick = (date: string) => {
     setSelectedDate(date);
-    console.log('[SchedulePage] 选中日期:', date);
   };
 
   const handleTeamFilter = (teamId: string) => {
@@ -88,7 +90,7 @@ const SchedulePage: React.FC = () => {
     console.log('[SchedulePage] 查看全部档期');
   };
 
-  const activeTeams = mockTeams.filter(t => t.status === 'active');
+  const activeTeams = teams.filter(t => t.status === 'active');
 
   return (
     <ScrollView scrollY className={styles.page}>

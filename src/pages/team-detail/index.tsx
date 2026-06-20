@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
-import Taro, { useRouter } from '@tarojs/taro';
-import { mockTeams } from '@/data/team';
-import { mockSchedules } from '@/data/schedule';
+import Taro, { useRouter, useDidShow } from '@tarojs/taro';
+import { useAppStore } from '@/store';
 import { Team, Schedule } from '@/types';
 import { formatMoney } from '@/utils/date';
 import styles from './index.module.scss';
@@ -10,20 +9,32 @@ import styles from './index.module.scss';
 const TeamDetailPage: React.FC = () => {
   const router = useRouter();
   const id = router.params.id;
-  const [team, setTeam] = useState<Team | null>(null);
-  const [teamSchedules, setTeamSchedules] = useState<Schedule[]>([]);
 
-  useEffect(() => {
-    const found = mockTeams.find(t => t.id === id);
+  const teams = useAppStore(state => state.teams);
+  const schedules = useAppStore(state => state.schedules);
+
+  const [team, setTeam] = useState<Team | null>(null);
+
+  const refreshData = () => {
+    const found = teams.find(t => t.id === id);
     if (found) {
       setTeam(found);
-      const schedules = mockSchedules
-        .filter(s => s.teamId === id && s.status !== 'cancelled')
-        .slice(0, 5);
-      setTeamSchedules(schedules);
     }
-    console.log('[TeamDetail] 团队详情:', id);
-  }, [id]);
+  };
+
+  useEffect(() => {
+    refreshData();
+  }, [id, teams]);
+
+  useDidShow(() => {
+    refreshData();
+  });
+
+  const teamSchedules = useMemo(() => {
+    return schedules
+      .filter(s => s.teamId === id && s.status !== 'cancelled')
+      .slice(0, 5);
+  }, [schedules, id]);
 
   const handleEdit = () => {
     Taro.showToast({ title: '编辑功能开发中', icon: 'none' });

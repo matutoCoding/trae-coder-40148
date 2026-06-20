@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { mockExecutionPlans, mockDiscrepancies } from '@/data/transaction';
+import { useAppStore } from '@/store';
 import { ExecutionPlan, Discrepancy } from '@/types';
 import { formatMoney } from '@/utils/date';
 import styles from './index.module.scss';
@@ -10,24 +10,29 @@ type TabType = 'pending' | 'approved' | 'rejected';
 
 const ApprovalPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('pending');
-  const [plans, setPlans] = useState<ExecutionPlan[]>(mockExecutionPlans);
+
+  const executionPlans = useAppStore(state => state.executionPlans);
+  const discrepancies = useAppStore(state => state.discrepancies);
+  const approvePlan = useAppStore(state => state.approvePlan);
+  const rejectPlan = useAppStore(state => state.rejectPlan);
+  const currentUser = useAppStore(state => state.currentUser);
 
   const stats = useMemo(() => {
-    const pending = plans.filter(p => p.status === 'pending').length;
-    const approved = plans.filter(p => p.status === 'approved').length;
-    const rejected = plans.filter(p => p.status === 'rejected').length;
-    const totalAmount = plans
+    const pending = executionPlans.filter(p => p.status === 'pending').length;
+    const approved = executionPlans.filter(p => p.status === 'approved').length;
+    const rejected = executionPlans.filter(p => p.status === 'rejected').length;
+    const totalAmount = executionPlans
       .filter(p => p.status !== 'rejected')
       .reduce((sum, p) => sum + p.amount, 0);
     return { pending, approved, rejected, totalAmount };
-  }, [plans]);
+  }, [executionPlans]);
 
   const filteredPlans = useMemo(() => {
-    return plans.filter(p => p.status === activeTab);
-  }, [plans, activeTab]);
+    return executionPlans.filter(p => p.status === activeTab);
+  }, [executionPlans, activeTab]);
 
   const getDiscrepancy = (discrepancyId: string): Discrepancy | undefined => {
-    return mockDiscrepancies.find(d => d.id === discrepancyId);
+    return discrepancies.find(d => d.id === discrepancyId);
   };
 
   const typeMap = {
@@ -45,16 +50,14 @@ const ApprovalPage: React.FC = () => {
   const handleApprove = (planId: string) => {
     Taro.showModal({
       title: '确认审批',
-      content: '确定同意此执行方案吗？',
+      editable: true,
+      placeholderText: '请输入审批意见（选填）',
+      content: '',
       confirmText: '同意',
       confirmColor: '#D4383C',
       success: (res) => {
         if (res.confirm) {
-          setPlans(prev => prev.map(p =>
-            p.id === planId
-              ? { ...p, status: 'approved', approver: '当前用户', approvalTime: '2026-07-01', approvalRemark: '同意此方案' }
-              : p
-          ));
+          approvePlan(planId, currentUser.name, res.content || '同意此方案');
           Taro.showToast({ title: '审批通过', icon: 'success' });
         }
       }
@@ -64,16 +67,14 @@ const ApprovalPage: React.FC = () => {
   const handleReject = (planId: string) => {
     Taro.showModal({
       title: '拒绝方案',
-      content: '确定拒绝此执行方案吗？',
+      editable: true,
+      placeholderText: '请输入拒绝原因',
+      content: '',
       confirmText: '拒绝',
       confirmColor: '#F53F3F',
       success: (res) => {
         if (res.confirm) {
-          setPlans(prev => prev.map(p =>
-            p.id === planId
-              ? { ...p, status: 'rejected', approver: '当前用户', approvalTime: '2026-07-01', approvalRemark: '方案不合理，请重新制定' }
-              : p
-          ));
+          rejectPlan(planId, currentUser.name, res.content || '方案不合理，请重新制定');
           Taro.showToast({ title: '已拒绝', icon: 'none' });
         }
       }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
-import Taro, { useRouter } from '@tarojs/taro';
-import { mockTransactions } from '@/data/transaction';
+import Taro, { useRouter, useDidShow } from '@tarojs/taro';
+import { useAppStore } from '@/store';
 import { Transaction } from '@/types';
 import { formatMoney } from '@/utils/date';
 import styles from './index.module.scss';
@@ -9,18 +9,41 @@ import styles from './index.module.scss';
 const TransactionDetailPage: React.FC = () => {
   const router = useRouter();
   const id = router.params.id;
+
+  const transactions = useAppStore(state => state.transactions);
+  const discrepancies = useAppStore(state => state.discrepancies);
+
   const [transaction, setTransaction] = useState<Transaction | null>(null);
 
-  useEffect(() => {
-    const found = mockTransactions.find(t => t.id === id);
+  const refreshData = () => {
+    const found = transactions.find(t => t.id === id);
     if (found) {
       setTransaction(found);
     }
-    console.log('[TransactionDetail] 流水详情:', id);
-  }, [id]);
+  };
+
+  useEffect(() => {
+    refreshData();
+  }, [id, transactions]);
+
+  useDidShow(() => {
+    refreshData();
+  });
+
+  const relatedDiscrepancy = useMemo(() => {
+    if (!transaction) return null;
+    return discrepancies.find(d =>
+      d.platformTransactionId === transaction.id ||
+      d.teamTransactionId === transaction.id
+    );
+  }, [discrepancies, transaction]);
 
   const handleViewDiscrepancy = () => {
-    Taro.navigateTo({ url: '/pages/discrepancy-detail/index?id=disc001' });
+    if (relatedDiscrepancy) {
+      Taro.navigateTo({ url: `/pages/discrepancy-detail/index?id=${relatedDiscrepancy.id}` });
+    } else {
+      Taro.navigateTo({ url: '/pages/discrepancy-detail/index?id=disc001' });
+    }
   };
 
   const handleReconcile = () => {
@@ -95,7 +118,8 @@ const TransactionDetailPage: React.FC = () => {
             <View className={[styles.reconcileIcon, reconcile.className].join(' ')}>
               <Text>{reconcile.icon}</Text>
             </View>
-            <Text className={[styles.reconcileText, reconcile.className.replace('styles.', '')].join(' ')}
+            <Text
+              className={styles.reconcileText}
               style={{ color: transaction.reconcileStatus === 'matched' ? '#00B42A' :
                               transaction.reconcileStatus === 'discrepancy' ? '#F53F3F' : '#FF7D00' }}
             >

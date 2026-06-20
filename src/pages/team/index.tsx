@@ -2,17 +2,19 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, Input } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import TeamCard from '@/components/TeamCard';
-import { mockTeams } from '@/data/team';
-import { mockSchedules } from '@/data/schedule';
+import { useAppStore } from '@/store';
 import { Team } from '@/types';
 import styles from './index.module.scss';
 
 type FilterType = 'all' | 'active' | 'inactive';
 
 const TeamPage: React.FC = () => {
-  const [teams, setTeams] = useState<Team[]>(mockTeams);
   const [searchText, setSearchText] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
+
+  const teams = useAppStore(state => state.teams);
+  const schedules = useAppStore(state => state.schedules);
+  const addTeam = useAppStore(state => state.addTeam);
 
   useDidShow(() => {
     console.log('[TeamPage] 页面显示');
@@ -39,7 +41,7 @@ const TeamPage: React.FC = () => {
   const stats = useMemo(() => {
     const activeTeams = teams.filter(t => t.status === 'active');
     const totalScheduleCount = activeTeams.reduce((sum, team) => {
-      const teamSchedules = mockSchedules.filter(s => s.teamId === team.id && s.status !== 'cancelled');
+      const teamSchedules = schedules.filter(s => s.teamId === team.id && s.status !== 'cancelled');
       return sum + teamSchedules.length;
     }, 0);
 
@@ -48,15 +50,74 @@ const TeamPage: React.FC = () => {
       active: activeTeams.length,
       totalSchedules: totalScheduleCount
     };
-  }, [teams]);
+  }, [teams, schedules]);
 
   const getTeamScheduleCount = (teamId: string) => {
-    return mockSchedules.filter(s => s.teamId === teamId && s.status !== 'cancelled').length;
+    return schedules.filter(s => s.teamId === teamId && s.status !== 'cancelled').length;
   };
 
   const handleAddTeam = () => {
-    console.log('[TeamPage] 新增团队');
-    Taro.showToast({ title: '新建团队功能', icon: 'none' });
+    Taro.showModal({
+      title: '新增策划团队',
+      editable: true,
+      placeholderText: '请输入团队名称',
+      content: '',
+      success: (nameRes) => {
+        if (!nameRes.confirm || !nameRes.content) return;
+        const name = nameRes.content.trim();
+        if (!name) return;
+
+        Taro.showModal({
+          title: '负责人姓名',
+          editable: true,
+          placeholderText: '请输入负责人姓名',
+          content: '',
+          success: (leaderRes) => {
+            if (!leaderRes.confirm || !leaderRes.content) return;
+            const leader = leaderRes.content.trim();
+            if (!leader) return;
+
+            Taro.showModal({
+              title: '联系电话',
+              editable: true,
+              placeholderText: '请输入联系电话',
+              content: '',
+              success: (phoneRes) => {
+                if (!phoneRes.confirm || !phoneRes.content) return;
+                const phone = phoneRes.content.trim();
+                if (!phone) return;
+
+                Taro.showModal({
+                  title: '分成比例（%）',
+                  editable: true,
+                  placeholderText: '请输入分成比例，如 70',
+                  content: '70',
+                  success: (rateRes) => {
+                    if (!rateRes.confirm) return;
+                    const rate = parseInt(rateRes.content || '70');
+                    if (isNaN(rate) || rate < 0 || rate > 100) {
+                      Taro.showToast({ title: '分成比例需在0-100之间', icon: 'none' });
+                      return;
+                    }
+
+                    addTeam({
+                      name,
+                      leader,
+                      phone,
+                      commissionRate: rate,
+                      description: '婚庆策划服务团队',
+                      status: 'active'
+                    });
+
+                    Taro.showToast({ title: '团队创建成功', icon: 'success' });
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
   };
 
   const handleFilterChange = (type: FilterType) => {

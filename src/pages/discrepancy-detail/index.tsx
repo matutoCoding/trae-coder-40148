@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
-import Taro, { useRouter } from '@tarojs/taro';
-import { mockDiscrepancies, mockTransactions, mockExecutionPlans } from '@/data/transaction';
+import Taro, { useRouter, useDidShow } from '@tarojs/taro';
+import { useAppStore } from '@/store';
 import { Discrepancy, Transaction, ExecutionPlan } from '@/types';
 import { formatMoney } from '@/utils/date';
 import styles from './index.module.scss';
@@ -9,26 +9,41 @@ import styles from './index.module.scss';
 const DiscrepancyDetailPage: React.FC = () => {
   const router = useRouter();
   const id = router.params.id;
+
+  const discrepancies = useAppStore(state => state.discrepancies);
+  const transactions = useAppStore(state => state.transactions);
+  const executionPlans = useAppStore(state => state.executionPlans);
+  const resolveDiscrepancy = useAppStore(state => state.resolveDiscrepancy);
+  const createExecutionPlan = useAppStore(state => state.createExecutionPlan);
+  const currentUser = useAppStore(state => state.currentUser);
+
   const [discrepancy, setDiscrepancy] = useState<Discrepancy | null>(null);
   const [platformTx, setPlatformTx] = useState<Transaction | null>(null);
   const [teamTx, setTeamTx] = useState<Transaction | null>(null);
   const [plan, setPlan] = useState<ExecutionPlan | null>(null);
 
-  useEffect(() => {
-    const found = mockDiscrepancies.find(d => d.id === id);
+  const refreshData = () => {
+    const found = discrepancies.find(d => d.id === id);
     if (found) {
       setDiscrepancy(found);
-      const pTx = mockTransactions.find(t => t.id === found.platformTransactionId);
+      const pTx = transactions.find(t => t.id === found.platformTransactionId);
       if (pTx) setPlatformTx(pTx);
       if (found.teamTransactionId) {
-        const tTx = mockTransactions.find(t => t.id === found.teamTransactionId);
+        const tTx = transactions.find(t => t.id === found.teamTransactionId);
         if (tTx) setTeamTx(tTx);
       }
-      const relatedPlan = mockExecutionPlans.find(p => p.discrepancyId === found.id);
+      const relatedPlan = executionPlans.find(p => p.discrepancyId === found.id);
       if (relatedPlan) setPlan(relatedPlan);
     }
-    console.log('[DiscrepancyDetail] 差异详情:', id);
-  }, [id]);
+  };
+
+  useEffect(() => {
+    refreshData();
+  }, [id, discrepancies, transactions, executionPlans]);
+
+  useDidShow(() => {
+    refreshData();
+  });
 
   const typeMap = {
     amount: { text: '金额差异', icon: '¥' },
@@ -43,22 +58,78 @@ const DiscrepancyDetailPage: React.FC = () => {
     approved: { text: '已审批', className: styles.approved, icon: '✓' }
   };
 
+  const handleMarkResolved = () => {
+    Taro.showModal({
+      title: '确认解决',
+      editable: true,
+      placeholderText: '请输入处理意见',
+      content: '',
+      success: (modalRes) => {
+        if (modalRes.confirm) {
+          const remark = modalRes.content || '已核实，差异已解决';
+          resolveDiscrepancy(id, remark);
+          Taro.showToast({ title: '已标记为解决', icon: 'success' });
+        }
+      }
+    });
+  };
+
+  const handleCreatePlan = () => {
+    Taro.showActionSheet({
+      itemList: ['补缴方案', '退款方案', '调整方案'],
+      success: (res) => {
+        const types = ['supplement', 'refund', 'adjust'] as const;
+        const selectedType = types[res.tapIndex];
+        const typeNames = ['补缴', '退款', '调整'];
+        const typeName = typeNames[res.tapIndex];
+
+        Taro.showModal({
+          title: `创建${typeName}方案`,
+          editable: true,
+          placeholderText: '请输入方案金额（元）',
+          content: discrepancy?.diffAmount ? String(discrepancy.diffAmount) : '',
+          success: (amountRes) => {
+            if (amountRes.confirm && amountRes.content) {
+              const amount = parseFloat(amountRes.content);
+              if (isNaN(amount) || amount <= 0) {
+                Taro.showToast({ title: '请输入有效金额', icon: 'none' });
+                return;
+              }
+
+              Taro.showModal({
+                title: '方案说明',
+                editable: true,
+                placeholderText: '请输入方案详细说明',
+                content: discrepancy?.description || '',
+                success: (descRes) => {
+                  if (descRes.confirm) {
+                    createExecutionPlan({
+                      discrepancyId: id,
+                      title: `${discrepancy?.description?.slice(0, 15) || '差异'}${typeName}方案`,
+                      description: descRes.content || `${typeName}处理方案`,
+                      type: selectedType,
+                      amount,
+                      proposer: currentUser.name
+                    });
+                    Taro.showToast({ title: '方案已创建', icon: 'success' });
+                  }
+                }
+              });
+            }
+          }
+        });
+      }
+    });
+  };
+
   const handleResolve = () => {
     Taro.showActionSheet({
       itemList: ['标记为已解决', '创建执行方案', '联系团队核实'],
       success: (res) => {
         if (res.tapIndex === 0) {
-          Taro.showModal({
-            title: '确认解决',
-            content: '确定将此差异标记为已解决吗？',
-            success: (modalRes) => {
-              if (modalRes.confirm) {
-                Taro.showToast({ title: '已标记为解决', icon: 'success' });
-              }
-            }
-          });
+          handleMarkResolved();
         } else if (res.tapIndex === 1) {
-          Taro.showToast({ title: '创建执行方案', icon: 'none' });
+          handleCreatePlan();
         } else {
           Taro.showToast({ title: '联系团队核实', icon: 'none' });
         }
@@ -121,14 +192,14 @@ const DiscrepancyDetailPage: React.FC = () => {
             <View className={styles.compareItem}>
               <Text className={styles.compareLabel}>平台流水</Text>
               <Text className={[styles.compareValue, styles.platformValue].join(' ')}>
-                {platformTx ? formatMoney(discrepancy.platformAmount) : '—'}
+                {platformTx || discrepancy.platformAmount > 0 ? formatMoney(discrepancy.platformAmount) : '—'}
               </Text>
             </View>
             <View className={styles.vsIcon}>VS</View>
             <View className={styles.compareItem}>
               <Text className={styles.compareLabel}>团队流水</Text>
               <Text className={[styles.compareValue, styles.teamValue].join(' ')}>
-                {teamTx ? formatMoney(discrepancy.teamAmount || 0) : '—'}
+                {teamTx || discrepancy.teamAmount ? formatMoney(discrepancy.teamAmount || 0) : '—'}
               </Text>
             </View>
           </View>
@@ -216,17 +287,20 @@ const DiscrepancyDetailPage: React.FC = () => {
                 {plan.type === 'refund' ? '退款' : plan.type === 'supplement' ? '补缴' : '调整'}：{formatMoney(plan.amount)}
               </Text>
             </View>
+            <View style={{ marginTop: '8rpx', fontSize: '24rpx', color: '#7B61FF' }}>
+              审批状态：{plan.status === 'pending' ? '待审批' : plan.status === 'approved' ? '已通过' : '已拒绝'}
+            </View>
           </View>
         )}
       </View>
 
       {discrepancy.status === 'pending' && (
         <View className={styles.actionBar}>
-          <View className={[styles.actionBtn, styles.secondaryBtn].join(' ')} onClick={handleResolve}>
+          <View className={[styles.actionBtn, styles.secondaryBtn].join(' ')} onClick={handleMarkResolved}>
             标记已解决
           </View>
-          <View className={[styles.actionBtn, styles.primaryBtn].join(' ')} onClick={handleResolve}>
-            处理差异
+          <View className={[styles.actionBtn, styles.primaryBtn].join(' ')} onClick={handleCreatePlan}>
+            创建方案
           </View>
         </View>
       )}

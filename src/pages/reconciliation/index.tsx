@@ -3,7 +3,7 @@ import { View, Text, ScrollView } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import DiscrepancyCard from '@/components/DiscrepancyCard';
 import TransactionCard from '@/components/TransactionCard';
-import { mockTransactions, mockDiscrepancies } from '@/data/transaction';
+import { useAppStore } from '@/store';
 import { formatMoney } from '@/utils/date';
 import styles from './index.module.scss';
 
@@ -12,51 +12,61 @@ type TabType = 'discrepancy' | 'platform' | 'team';
 const ReconciliationPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('discrepancy');
 
+  const transactions = useAppStore(state => state.transactions);
+  const discrepancies = useAppStore(state => state.discrepancies);
+  const runReconciliation = useAppStore(state => state.runReconciliation);
+
   useDidShow(() => {
     console.log('[ReconciliationPage] 页面显示');
   });
 
   const stats = useMemo(() => {
-    const matched = mockTransactions.filter(t => t.reconcileStatus === 'matched').length;
-    const discrepancy = mockDiscrepancies.filter(d => d.status === 'pending').length;
-    const pending = mockTransactions.filter(t => t.reconcileStatus === 'pending').length;
-    const totalAmount = mockTransactions
+    const matched = transactions.filter(t => t.reconcileStatus === 'matched').length;
+    const pendingDiscrepancies = discrepancies.filter(d => d.status === 'pending').length;
+    const pending = transactions.filter(t => t.reconcileStatus === 'pending').length;
+    const totalAmount = transactions
       .filter(t => t.type === 'platform')
       .reduce((sum, t) => sum + t.amount, 0);
 
     return {
       matched,
-      discrepancy,
+      discrepancy: pendingDiscrepancies,
       pending,
       totalAmount
     };
-  }, []);
+  }, [transactions, discrepancies]);
 
   const pendingDiscrepancies = useMemo(() => {
-    return mockDiscrepancies.filter(d => d.status === 'pending');
-  }, []);
+    return discrepancies.filter(d => d.status === 'pending');
+  }, [discrepancies]);
 
   const platformTransactions = useMemo(() => {
-    return mockTransactions.filter(t => t.type === 'platform').slice(0, 5);
-  }, []);
+    return transactions.filter(t => t.type === 'platform').slice(0, 5);
+  }, [transactions]);
 
   const teamTransactions = useMemo(() => {
-    return mockTransactions.filter(t => t.type === 'team').slice(0, 5);
-  }, []);
+    return transactions.filter(t => t.type === 'team').slice(0, 5);
+  }, [transactions]);
 
   const handleViewAllDiscrepancies = () => {
     console.log('[ReconciliationPage] 查看全部差异');
   };
 
   const handleStartReconcile = () => {
-    Taro.showToast({ title: '开始对账...', icon: 'loading' });
+    Taro.showLoading({ title: '对账中...' });
     setTimeout(() => {
-      Taro.showToast({ title: '对账完成', icon: 'success' });
-    }, 1500);
+      runReconciliation();
+      Taro.hideLoading();
+      const newCount = discrepancies.filter(d => d.status === 'pending').length;
+      Taro.showToast({
+        title: `对账完成，发现${newCount}条差异`,
+        icon: 'none',
+        duration: 2000
+      });
+    }, 1200);
   };
 
   const handleExportReport = () => {
-    console.log('[ReconciliationPage] 导出对账报表');
     Taro.showToast({ title: '报表生成中...', icon: 'none' });
   };
 

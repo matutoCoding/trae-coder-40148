@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, Input, Switch, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
-import { mockTeams } from '@/data/team';
+import { useAppStore } from '@/store';
 import styles from './index.module.scss';
 
 const ScheduleCreatePage: React.FC = () => {
   const router = useRouter();
   const initialDate = router.params.date || '2026-06-22';
+  const teams = useAppStore(state => state.teams);
+  const addSchedule = useAppStore(state => state.addSchedule);
 
   const [formData, setFormData] = useState({
     groomName: '',
@@ -29,11 +31,15 @@ const ScheduleCreatePage: React.FC = () => {
   };
 
   const handleSelectTeam = () => {
-    const teamNames = mockTeams.filter(t => t.status === 'active').map(t => t.name);
+    const teamNames = teams.filter(t => t.status === 'active').map(t => t.name);
+    if (teamNames.length === 0) {
+      Taro.showToast({ title: '暂无可选团队', icon: 'none' });
+      return;
+    }
     Taro.showActionSheet({
       itemList: teamNames,
       success: (res) => {
-        const selected = mockTeams.filter(t => t.status === 'active')[res.tapIndex];
+        const selected = teams.filter(t => t.status === 'active')[res.tapIndex];
         setFormData(prev => ({
           ...prev,
           teamId: selected.id,
@@ -43,8 +49,47 @@ const ScheduleCreatePage: React.FC = () => {
     });
   };
 
-  const handleDateSelect = (field: string) => {
-    Taro.showToast({ title: '日期选择功能开发中', icon: 'none' });
+  const handleDateSelect = (field: 'date' | 'endDate') => {
+    const current = formData[field] || formData.date;
+    const parts = current.split('-');
+    const year = parseInt(parts[0]);
+    const month = parseInt(parts[1]) - 1;
+    const day = parseInt(parts[2]);
+
+    const pickerOptions: any = { year, month, day };
+    if (field === 'endDate') {
+      pickerOptions.minDate = new Date(formData.date);
+    }
+
+    Taro.showDatePicker?.({
+      ...pickerOptions,
+      success: (res: any) => {
+        const selectedDate = `${res.year}-${String(res.month + 1).padStart(2, '0')}-${String(res.day).padStart(2, '0')}`;
+        setFormData(prev => ({ ...prev, [field]: selectedDate }));
+      },
+      fail: () => {
+        Taro.showToast({ title: '请直接编辑日期', icon: 'none' });
+      }
+    });
+
+    if (typeof Taro.showDatePicker !== 'function') {
+      Taro.showModal({
+        title: '选择日期',
+        editable: true,
+        placeholderText: '格式: YYYY-MM-DD',
+        content: current,
+        success: (res) => {
+          if (res.confirm && res.content) {
+            const regex = /^\d{4}-\d{2}-\d{2}$/;
+            if (regex.test(res.content)) {
+              setFormData(prev => ({ ...prev, [field]: res.content }));
+            } else {
+              Taro.showToast({ title: '日期格式错误', icon: 'none' });
+            }
+          }
+        }
+      });
+    }
   };
 
   const handleSubmit = () => {
@@ -56,10 +101,37 @@ const ScheduleCreatePage: React.FC = () => {
       Taro.showToast({ title: '请选择策划团队', icon: 'none' });
       return;
     }
+    if (!formData.amount) {
+      Taro.showToast({ title: '请填写金额', icon: 'none' });
+      return;
+    }
+    if (formData.isMultiDay && !formData.endDate) {
+      Taro.showToast({ title: '请选择结束日期', icon: 'none' });
+      return;
+    }
+    if (formData.isMultiDay && new Date(formData.endDate) <= new Date(formData.date)) {
+      Taro.showToast({ title: '结束日期需晚于开始日期', icon: 'none' });
+      return;
+    }
 
-    console.log('[ScheduleCreate] 提交档期:', formData);
+    addSchedule({
+      groomName: formData.groomName,
+      brideName: formData.brideName,
+      phone: formData.phone,
+      teamId: formData.teamId,
+      teamName: formData.teamName,
+      date: formData.date,
+      endDate: formData.isMultiDay ? formData.endDate : undefined,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+      amount: parseFloat(formData.amount) || 0,
+      deposit: parseFloat(formData.deposit) || 0,
+      isMultiDay: formData.isMultiDay,
+      remark: formData.remark
+    });
+
     Taro.showToast({ title: '创建成功', icon: 'success' });
-    setTimeout(() => Taro.navigateBack(), 1500);
+    setTimeout(() => Taro.navigateBack(), 1000);
   };
 
   const handleReset = () => {
