@@ -223,3 +223,254 @@
   color: $color-text-primary;
   font-weight: $font-weight-medium;
 }
+
+.viewTabs {
+  display: flex;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  padding: 6rpx;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.viewTab {
+  flex: 1;
+  padding: $spacing-sm 0;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+}
+
+.activeViewTab {
+  background: $color-primary;
+  color: $color-text-white;
+  font-weight: $font-weight-semibold;
+}
+
+.teamAvailability {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.monthHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.monthNavBtn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-hover;
+  border-radius: 50%;
+  font-size: $font-size-md;
+}
+
+.monthText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.weekDays {
+  display: flex;
+  margin-bottom: $spacing-sm;
+}
+
+.weekDay {
+  flex: 1;
+  text-align: center;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  padding: $spacing-xs 0;
+}
+
+.calendarGrid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.calDay {
+  width: calc(100% / 7);
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: $font-size-sm;
+  border-radius: $radius-sm;
+  margin-bottom: 4rpx;
+  transition: all $transition-fast;
+
+  &.otherMonth {
+    opacity: 0.3;
+  }
+
+  &.free {
+    background: rgba(0, 180, 42, 0.1);
+    color: $color-success;
+  }
+
+  &.occupied {
+    background: rgba(212, 39, 39, 0.15);
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &.conflict {
+    background: rgba(245, 63, 63, 0.2);
+    color: $color-error;
+    font-weight: $font-weight-bold;
+    border: 2rpx solid $color-error;
+  }
+}
+
+.dayNumber {
+  font-size: $font-size-md;
+}
+
+.dayStatus {
+  font-size: 20rpx;
+  margin-top: 4rpx;
+}
+
+.teamSelect {
+  margin-bottom: $spacing-lg;
+}
+
+.teamSelectLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  display: block;
+}
+
+.teamSelectList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.teamChip {
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-button;
+  background: $color-bg-card;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+  transition: all $transition-fast;
+}
+
+.activeTeamChip {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-color: transparent;
+}
+
+.conflictModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.conflictModalContent {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+  padding: $spacing-lg;
+  padding-bottom: 120rpx;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.conflictModalTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.conflictModalDate {
+  font-size: $font-size-sm;
+  color: $color-error;
+  margin-bottom: $spacing-md;
+  font-weight: $font-weight-semibold;
+}
+
+.conflictItem {
+  background: linear-gradient(135deg, rgba(245, 63, 63, 0.08) 0%, rgba(245, 63, 63, 0.02) 100%);
+  border: 1px solid rgba(245, 63, 63, 0.2);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-sm;
+}
+
+.conflictCouple {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.conflictTime {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.closeModalBtn {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-lg;
+  color: $color-text-tertiary;
+}
+
+.availabilityStats {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-divider;
+}
+
+.availabilityStatItem {
+  flex: 1;
+  text-align: center;
+}
+
+.availabilityStatNum {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.availabilityStatLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.greenText { color: $color-success; }
+.redText { color: $color-primary; }
+.orangeText { color: $color-error; }

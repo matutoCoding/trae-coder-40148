@@ -17,6 +17,7 @@ interface ReconciliationSummary {
   newDiscrepancies: number;
   resolvedDiscrepancies: number;
   pendingPlans: number;
+  newDiscrepancyIds?: string[];
 }
 
 interface AppState {
@@ -61,6 +62,13 @@ interface AppState {
   runReconciliation: () => ReconciliationSummary;
   resolveDiscrepancy: (id: string, remark: string) => void;
   createExecutionPlan: (plan: Omit<ExecutionPlan, 'id' | 'createdAt' | 'status'>) => void;
+  batchCreateExecutionPlans: (planData: {
+    discrepancyIds: string[];
+    type: 'refund' | 'supplement' | 'adjust';
+    title: string;
+    description: string;
+    amount: number;
+  }) => void;
   approvePlan: (id: string, approver: string, remark: string) => void;
   rejectPlan: (id: string, approver: string, remark: string) => void;
 }
@@ -477,6 +485,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       });
 
       summary.newDiscrepancies = uniqueNew.length;
+      summary.newDiscrepancyIds = uniqueNew.map(d => d.id);
       summary.resolvedDiscrepancies = discrepancies.filter(d => d.status === 'resolved' || d.status === 'approved').length;
       summary.pendingPlans = executionPlans.filter(p => p.status === 'pending').length;
 
@@ -533,6 +542,42 @@ export const useAppStore = create<AppState>((set, get) => ({
         };
       })
     }));
+  },
+
+  batchCreateExecutionPlans: (planData) => {
+    const { currentUser } = get();
+    const { discrepancyIds, type, title, description, amount } = planData;
+    const typeLabel = type === 'refund' ? '退款' : type === 'supplement' ? '补缴' : '调整';
+
+    set(state => {
+      const newPlans: ExecutionPlan[] = discrepancyIds.map((id, idx) => ({
+        id: `plan_${Date.now()}_${idx}`,
+        discrepancyId: id,
+        title,
+        description,
+        type,
+        amount,
+        proposer: currentUser.name,
+        status: 'pending',
+        createdAt: formatDate(new Date())
+      }));
+
+      const updatedDiscrepancies = state.discrepancies.map(d => {
+        if (!discrepancyIds.includes(d.id)) return d;
+        const prevRecords = d.processRecords || [];
+        return {
+          ...d,
+          status: 'processing',
+          approvalStatus: 'pending',
+          processRecords: [...prevRecords, buildProcessRecord('plan_created', currentUser.name, `批量创建${typeLabel}方案：${title}`)]
+        };
+      });
+
+      return {
+        executionPlans: [...state.executionPlans, ...newPlans],
+        discrepancies: updatedDiscrepancies
+      };
+    });
   },
 
   approvePlan: (id, approver, remark) => {

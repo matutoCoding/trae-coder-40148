@@ -28,6 +28,12 @@ export const addDays = (dateStr: string, days: number): string => {
   return formatDate(date);
 };
 
+export const addMonths = (date: Date, months: number): Date => {
+  const result = new Date(date);
+  result.setMonth(result.getMonth() + months);
+  return result;
+};
+
 export const diffDays = (startDate: string, endDate: string): number => {
   const start = new Date(startDate);
   const end = new Date(endDate);

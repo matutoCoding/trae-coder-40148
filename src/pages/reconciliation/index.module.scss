@@ -369,3 +369,286 @@
 .planValue {
   color: $color-warning;
 }
+
+.subTabs {
+  display: flex;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  padding: 6rpx;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.subTab {
+  flex: 1;
+  text-align: center;
+  padding: $spacing-sm 0;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+}
+
+.activeSubTab {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-weight: $font-weight-semibold;
+}
+
+.batchBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(135deg, rgba(123, 97, 255, 0.08) 0%, rgba(123, 97, 255, 0.02) 100%);
+  border: 1px solid rgba(123, 97, 255, 0.2);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+}
+
+.batchInfo {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.batchCount {
+  color: #7B61FF;
+  font-weight: $font-weight-semibold;
+}
+
+.batchActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.batchBtn {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.batchBtnPrimary {
+  background: linear-gradient(135deg, #7B61FF 0%, #9D8CFF 100%);
+  color: $color-text-white;
+}
+
+.batchBtnSecondary {
+  background: $color-bg-card;
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+}
+
+.discrepancyCardWrapper {
+  position: relative;
+  margin-bottom: $spacing-md;
+}
+
+.checkbox {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background: $color-bg-card;
+}
+
+.checked {
+  background: $color-primary;
+  border-color: $color-primary;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+  font-size: 24rpx;
+}
+
+.reconcileResultDetail {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px dashed rgba(0, 180, 42, 0.3);
+}
+
+.resultDetailTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.resultList {
+  max-height: 400rpx;
+  overflow-y: auto;
+}
+
+.resultItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.resultItemDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultItemTag {
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-size: 20rpx;
+  margin-left: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.tagAmount {
+  background: rgba(245, 63, 63, 0.1);
+  color: $color-error;
+}
+
+.tagTime {
+  background: rgba(255, 125, 0, 0.1);
+  color: #FF7D00;
+}
+
+.tagMissing {
+  background: rgba(123, 97, 255, 0.1);
+  color: #7B61FF;
+}
+
+.batchModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.batchModalContent {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+  padding: $spacing-lg;
+  padding-bottom: 120rpx;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.batchModalTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+}
+
+.formGroup {
+  margin-bottom: $spacing-md;
+}
+
+.formLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  display: block;
+}
+
+.formInput {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 $spacing-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  background: $color-bg-hover;
+}
+
+.formTextarea {
+  width: 100%;
+  min-height: 160rpx;
+  padding: $spacing-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  background: $color-bg-hover;
+}
+
+.typeOptions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.typeOption {
+  flex: 1;
+  padding: $spacing-md;
+  border: 2rpx solid $color-border;
+  border-radius: $radius-md;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  transition: all $transition-fast;
+}
+
+.typeOptionActive {
+  border-color: $color-primary;
+  background: rgba(212, 56, 60, 0.05);
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.modalActions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.modalBtn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+}
+
+.modalBtnPrimary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+}
+
+.modalBtnSecondary {
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+}
+
+.closeBatchModal {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-lg;
+  color: $color-text-tertiary;
+}
