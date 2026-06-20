@@ -7,11 +7,17 @@
   box-shadow: $shadow-card;
   margin-bottom: $spacing-md;
   transition: all $transition-base;
+  border-left: 0 solid $color-error;
 
   &:active {
     transform: scale(0.98);
     box-shadow: $shadow-card-hover;
   }
+}
+
+.conflictCard {
+  border-left: 8rpx solid $color-error;
+  background: linear-gradient(to right, rgba(245, 63, 63, 0.05), $color-bg-card);
 }
 
 .header {
@@ -49,6 +55,19 @@
 }
 
 .mergedText {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.conflictTag {
+  background: linear-gradient(135deg, $color-error 0%, #FF7875 100%);
+  padding: 6rpx 16rpx;
+  border-radius: $radius-sm;
+  margin-right: $spacing-xs;
+}
+
+.conflictText {
   font-size: $font-size-xs;
   color: $color-text-white;
   font-weight: $font-weight-medium;

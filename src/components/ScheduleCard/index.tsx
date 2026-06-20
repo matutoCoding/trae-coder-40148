@@ -29,7 +29,10 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, showDate = true, 
   };
 
   return (
-    <View className={styles.card} onClick={handleClick}>
+    <View
+      className={[styles.card, schedule.isConflict && styles.conflictCard].filter(Boolean).join(' ')}
+      onClick={handleClick}
+    >
       <View className={styles.header}>
         <View className={styles.coupleInfo}>
           <Text className={styles.coupleName}>{schedule.coupleName}</Text>
@@ -37,11 +40,18 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, showDate = true, 
             {status.text}
           </View>
         </View>
-        {schedule.isMerged && (
-          <View className={styles.mergedTag}>
-            <Text className={styles.mergedText}>连订{schedule.mergedDayCount}天</Text>
-          </View>
-        )}
+        <View style={{ display: 'flex', gap: '8rpx' }}>
+          {schedule.isConflict && (
+            <View className={styles.conflictTag}>
+              <Text className={styles.conflictText}>⚠ 冲突</Text>
+            </View>
+          )}
+          {schedule.isMerged && (
+            <View className={styles.mergedTag}>
+              <Text className={styles.mergedText}>连订{schedule.mergedDayCount}天</Text>
+            </View>
+          )}
+        </View>
       </View>
 
       <View className={styles.content}>

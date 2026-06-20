@@ -116,6 +116,27 @@
   color: $color-text-secondary;
 }
 
+.conflictInfo {
+  background: linear-gradient(135deg, rgba(245, 63, 63, 0.1) 0%, rgba(245, 63, 63, 0.05) 100%);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  border: 2rpx solid rgba(245, 63, 63, 0.3);
+}
+
+.conflictTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-error;
+  margin-bottom: $spacing-sm;
+}
+
+.conflictDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
 .actionBar {
   position: fixed;
   bottom: 0;

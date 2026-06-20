@@ -127,6 +127,10 @@
   background: $color-schedule-merged;
 }
 
+.conflict {
+  background: $color-error;
+}
+
 .legendText {
   font-size: $font-size-xs;
   color: $color-text-secondary;

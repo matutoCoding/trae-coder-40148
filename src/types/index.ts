@@ -32,6 +32,8 @@ export interface Schedule {
   startTime: string;
   endTime: string;
   status: 'confirmed' | 'pending' | 'cancelled';
+  isConflict?: boolean;
+  conflictSchedules?: string[];
   amount: number;
   deposit: number;
   isMerged: boolean;
@@ -78,6 +80,14 @@ export interface Transaction {
   discrepancyType?: 'amount' | 'time' | 'missing';
 }
 
+// 处理记录
+export interface ProcessRecord {
+  step: 'created' | 'plan_created' | 'approved' | 'rejected' | 'resolved';
+  operator: string;
+  time: string;
+  remark: string;
+}
+
 // 差异记录
 export interface Discrepancy {
   id: string;
@@ -89,11 +99,12 @@ export interface Discrepancy {
   teamAmount?: number;
   diffAmount: number;
   date: string;
-  status: 'pending' | 'resolved' | 'approved';
+  status: 'pending' | 'processing' | 'resolved' | 'approved';
   handler?: string;
   handleRemark?: string;
   handleTime?: string;
   approvalStatus?: 'pending' | 'approved' | 'rejected';
+  processRecords?: ProcessRecord[];
   createdAt: string;
 }
 
@@ -122,7 +133,8 @@ export interface CalendarDay {
   isCurrentMonth: boolean;
   isToday: boolean;
   schedules: Schedule[];
-  status: 'free' | 'partial' | 'occupied';
+  hasConflict?: boolean;
+  status: 'free' | 'partial' | 'occupied' | 'conflict';
   mergedGroups?: MergedScheduleGroup[];
 }
 

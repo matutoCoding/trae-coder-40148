@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, Input, Switch, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import { useAppStore } from '@/store';
@@ -9,6 +9,7 @@ const ScheduleCreatePage: React.FC = () => {
   const initialDate = router.params.date || '2026-06-22';
   const teams = useAppStore(state => state.teams);
   const addSchedule = useAppStore(state => state.addSchedule);
+  const checkScheduleConflict = useAppStore(state => state.checkScheduleConflict);
 
   const [formData, setFormData] = useState({
     groomName: '',
@@ -25,6 +26,15 @@ const ScheduleCreatePage: React.FC = () => {
     isMultiDay: false,
     remark: ''
   });
+
+  const conflictInfo = useMemo(() => {
+    if (!formData.teamId) return null;
+    return checkScheduleConflict(
+      formData.teamId,
+      formData.date,
+      formData.isMultiDay ? formData.endDate : undefined
+    );
+  }, [formData.teamId, formData.date, formData.endDate, formData.isMultiDay, checkScheduleConflict]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -51,45 +61,45 @@ const ScheduleCreatePage: React.FC = () => {
 
   const handleDateSelect = (field: 'date' | 'endDate') => {
     const current = formData[field] || formData.date;
-    const parts = current.split('-');
-    const year = parseInt(parts[0]);
-    const month = parseInt(parts[1]) - 1;
-    const day = parseInt(parts[2]);
 
-    const pickerOptions: any = { year, month, day };
-    if (field === 'endDate') {
-      pickerOptions.minDate = new Date(formData.date);
-    }
-
-    Taro.showDatePicker?.({
-      ...pickerOptions,
-      success: (res: any) => {
-        const selectedDate = `${res.year}-${String(res.month + 1).padStart(2, '0')}-${String(res.day).padStart(2, '0')}`;
-        setFormData(prev => ({ ...prev, [field]: selectedDate }));
-      },
-      fail: () => {
-        Taro.showToast({ title: '请直接编辑日期', icon: 'none' });
-      }
-    });
-
-    if (typeof Taro.showDatePicker !== 'function') {
-      Taro.showModal({
-        title: '选择日期',
-        editable: true,
-        placeholderText: '格式: YYYY-MM-DD',
-        content: current,
-        success: (res) => {
-          if (res.confirm && res.content) {
-            const regex = /^\d{4}-\d{2}-\d{2}$/;
-            if (regex.test(res.content)) {
-              setFormData(prev => ({ ...prev, [field]: res.content }));
-            } else {
-              Taro.showToast({ title: '日期格式错误', icon: 'none' });
-            }
+    Taro.showModal({
+      title: '选择日期',
+      editable: true,
+      placeholderText: '格式: YYYY-MM-DD',
+      content: current,
+      success: (res) => {
+        if (res.confirm && res.content) {
+          const regex = /^\d{4}-\d{2}-\d{2}$/;
+          if (regex.test(res.content)) {
+            setFormData(prev => ({ ...prev, [field]: res.content }));
+          } else {
+            Taro.showToast({ title: '日期格式错误', icon: 'none' });
           }
         }
-      });
-    }
+      }
+    });
+  };
+
+  const doSubmit = (allowConflict: boolean) => {
+    addSchedule({
+      groomName: formData.groomName,
+      brideName: formData.brideName,
+      phone: formData.phone,
+      teamId: formData.teamId,
+      teamName: formData.teamName,
+      date: formData.date,
+      endDate: formData.isMultiDay ? formData.endDate : undefined,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+      amount: parseFloat(formData.amount) || 0,
+      deposit: parseFloat(formData.deposit) || 0,
+      isMultiDay: formData.isMultiDay,
+      allowConflict,
+      remark: formData.remark
+    });
+
+    Taro.showToast({ title: allowConflict ? '已保存(含冲突)' : '创建成功', icon: 'success' });
+    setTimeout(() => Taro.navigateBack(), 1000);
   };
 
   const handleSubmit = () => {
@@ -114,24 +124,23 @@ const ScheduleCreatePage: React.FC = () => {
       return;
     }
 
-    addSchedule({
-      groomName: formData.groomName,
-      brideName: formData.brideName,
-      phone: formData.phone,
-      teamId: formData.teamId,
-      teamName: formData.teamName,
-      date: formData.date,
-      endDate: formData.isMultiDay ? formData.endDate : undefined,
-      startTime: formData.startTime,
-      endTime: formData.endTime,
-      amount: parseFloat(formData.amount) || 0,
-      deposit: parseFloat(formData.deposit) || 0,
-      isMultiDay: formData.isMultiDay,
-      remark: formData.remark
-    });
-
-    Taro.showToast({ title: '创建成功', icon: 'success' });
-    setTimeout(() => Taro.navigateBack(), 1000);
+    if (conflictInfo?.hasConflict) {
+      const datesStr = conflictInfo.conflictDates.join('、');
+      Taro.showModal({
+        title: '⚠ 档期冲突提醒',
+        content: `${formData.teamName}在以下日期已被占用：\n${datesStr}\n\n您可以选择：\n• 继续保存（标记为冲突）\n• 返回修改日期`,
+        confirmText: '继续保存',
+        cancelText: '修改日期',
+        confirmColor: '#D4383C',
+        success: (res) => {
+          if (res.confirm) {
+            doSubmit(true);
+          }
+        }
+      });
+    } else {
+      doSubmit(false);
+    }
   };
 
   const handleReset = () => {
@@ -154,6 +163,24 @@ const ScheduleCreatePage: React.FC = () => {
 
   return (
     <ScrollView scrollY className={styles.page}>
+      {conflictInfo?.hasConflict && (
+        <View className={styles.conflictBanner}>
+          <View className={styles.conflictHeader}>
+            <View className={styles.conflictIcon}>!</View>
+            <Text className={styles.conflictTitle}>档期冲突提醒</Text>
+          </View>
+          <Text className={styles.conflictDesc}>
+            {formData.teamName}在以下日期已被其他新人占用：
+          </Text>
+          <Text className={styles.conflictDates}>
+            {conflictInfo.conflictDates.join('、')}
+          </Text>
+          <Text className={styles.conflictDesc} style={{ marginTop: '12rpx' }}>
+            您可以继续保存（将标记为冲突），或更换档期日期。
+          </Text>
+        </View>
+      )}
+
       <View className={styles.section}>
         <Text className={styles.sectionTitle}>新人信息</Text>
         <View className={styles.formItem}>
@@ -276,8 +303,11 @@ const ScheduleCreatePage: React.FC = () => {
         <View className={[styles.btn, styles.btnSecondary].join(' ')} onClick={handleReset}>
           重置
         </View>
-        <View className={[styles.btn, styles.btnPrimary].join(' ')} onClick={handleSubmit}>
-          创建档期
+        <View
+          className={[styles.btn, styles.btnPrimary].join(' ')}
+          onClick={handleSubmit}
+        >
+          {conflictInfo?.hasConflict ? '确认提交(含冲突)' : '创建档期'}
         </View>
       </View>
     </ScrollView>

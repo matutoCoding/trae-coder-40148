@@ -5,6 +5,7 @@ import DiscrepancyCard from '@/components/DiscrepancyCard';
 import TransactionCard from '@/components/TransactionCard';
 import { useAppStore } from '@/store';
 import { formatMoney } from '@/utils/date';
+import { Discrepancy } from '@/types';
 import styles from './index.module.scss';
 
 type TabType = 'discrepancy' | 'platform' | 'team';
@@ -14,15 +15,47 @@ const ReconciliationPage: React.FC = () => {
 
   const transactions = useAppStore(state => state.transactions);
   const discrepancies = useAppStore(state => state.discrepancies);
+  const executionPlans = useAppStore(state => state.executionPlans);
+  const teams = useAppStore(state => state.teams);
   const runReconciliation = useAppStore(state => state.runReconciliation);
+  const lastReconciliation = useAppStore(state => state.lastReconciliation);
+  const reconcileFilters = useAppStore(state => state.reconcileFilters);
+  const setReconcileFilters = useAppStore(state => state.setReconcileFilters);
 
   useDidShow(() => {
     console.log('[ReconciliationPage] 页面显示');
   });
 
+  const filteredDiscrepancies = useMemo(() => {
+    let list = discrepancies;
+
+    if (reconcileFilters.month) {
+      list = list.filter(d => d.date.startsWith(reconcileFilters.month!));
+    }
+    if (reconcileFilters.teamId) {
+      const teamTx = transactions.find(t =>
+        (t.id === list[0]?.platformTransactionId || t.id === list[0]?.teamTransactionId)
+      );
+      if (teamTx) {
+        list = list.filter(d => {
+          const pTx = transactions.find(t => t.id === d.platformTransactionId);
+          const tTx = d.teamTransactionId ? transactions.find(t => t.id === d.teamTransactionId) : null;
+          return (pTx && pTx.teamId === reconcileFilters.teamId) ||
+                 (tTx && tTx.teamId === reconcileFilters.teamId);
+        });
+      }
+    }
+    if (reconcileFilters.type) {
+      list = list.filter(d => d.type === reconcileFilters.type);
+    }
+
+    return list;
+  }, [discrepancies, reconcileFilters, transactions]);
+
   const stats = useMemo(() => {
     const matched = transactions.filter(t => t.reconcileStatus === 'matched').length;
     const pendingDiscrepancies = discrepancies.filter(d => d.status === 'pending').length;
+    const processingDiscrepancies = discrepancies.filter(d => d.status === 'processing').length;
     const pending = transactions.filter(t => t.reconcileStatus === 'pending').length;
     const totalAmount = transactions
       .filter(t => t.type === 'platform')
@@ -30,15 +63,16 @@ const ReconciliationPage: React.FC = () => {
 
     return {
       matched,
-      discrepancy: pendingDiscrepancies,
+      discrepancy: pendingDiscrepancies + processingDiscrepancies,
+      pendingProcessing: processingDiscrepancies,
       pending,
       totalAmount
     };
-  }, [transactions, discrepancies]);
+  }, [transactions, discrepancies, executionPlans]);
 
   const pendingDiscrepancies = useMemo(() => {
-    return discrepancies.filter(d => d.status === 'pending');
-  }, [discrepancies]);
+    return filteredDiscrepancies.filter(d => d.status === 'pending' || d.status === 'processing');
+  }, [filteredDiscrepancies]);
 
   const platformTransactions = useMemo(() => {
     return transactions.filter(t => t.type === 'platform').slice(0, 5);
@@ -48,6 +82,15 @@ const ReconciliationPage: React.FC = () => {
     return transactions.filter(t => t.type === 'team').slice(0, 5);
   }, [transactions]);
 
+  const months = ['2026-06', '2026-05', '2026-04'];
+  const discrepancyTypes: { value: Discrepancy['type'] | ''; label: string }[] = [
+    { value: '', label: '全部类型' },
+    { value: 'amount', label: '金额差异' },
+    { value: 'time', label: '时间差异' },
+    { value: 'missing_platform', label: '平台缺失' },
+    { value: 'missing_team', label: '团队缺失' }
+  ];
+
   const handleViewAllDiscrepancies = () => {
     console.log('[ReconciliationPage] 查看全部差异');
   };
@@ -55,11 +98,10 @@ const ReconciliationPage: React.FC = () => {
   const handleStartReconcile = () => {
     Taro.showLoading({ title: '对账中...' });
     setTimeout(() => {
-      runReconciliation();
+      const summary = runReconciliation();
       Taro.hideLoading();
-      const newCount = discrepancies.filter(d => d.status === 'pending').length;
       Taro.showToast({
-        title: `对账完成，发现${newCount}条差异`,
+        title: `对账完成，新增${summary.newDiscrepancies}条差异`,
         icon: 'none',
         duration: 2000
       });
@@ -104,6 +146,95 @@ const ReconciliationPage: React.FC = () => {
         </View>
       </View>
 
+      <View className={styles.filterSection}>
+        <View className={styles.filterRow}>
+          <Text className={styles.filterLabel}>对账月份</Text>
+          <View className={styles.filterChips}>
+            <View
+              className={[styles.chip, !reconcileFilters.month && styles.activeChip].join(' ')}
+              onClick={() => setReconcileFilters({ month: undefined })}
+            >
+              全部
+            </View>
+            {months.map(m => (
+              <View
+                key={m}
+                className={[styles.chip, reconcileFilters.month === m && styles.activeChip].join(' ')}
+                onClick={() => setReconcileFilters({ month: m })}
+              >
+                {m}
+              </View>
+            ))}
+          </View>
+        </View>
+
+        <View className={styles.filterRow}>
+          <Text className={styles.filterLabel}>策划团队</Text>
+          <View className={styles.filterChips}>
+            <View
+              className={[styles.chip, !reconcileFilters.teamId && styles.activeChip].join(' ')}
+              onClick={() => setReconcileFilters({ teamId: undefined })}
+            >
+              全部团队
+            </View>
+            {teams.slice(0, 4).map(team => (
+              <View
+                key={team.id}
+                className={[styles.chip, reconcileFilters.teamId === team.id && styles.activeChip].join(' ')}
+                onClick={() => setReconcileFilters({ teamId: team.id })}
+              >
+                {team.name}
+              </View>
+            ))}
+          </View>
+        </View>
+
+        <View className={styles.filterRow}>
+          <Text className={styles.filterLabel}>差异类型</Text>
+          <View className={styles.filterChips}>
+            {discrepancyTypes.map(t => (
+              <View
+                key={t.value || 'all'}
+                className={[styles.chip, reconcileFilters.type === t.value && styles.activeChip].join(' ')}
+                onClick={() => setReconcileFilters({ type: (t.value as any) || undefined })}
+              >
+                {t.label}
+              </View>
+            ))}
+          </View>
+        </View>
+      </View>
+
+      {lastReconciliation && (
+        <View className={styles.reconcileResult}>
+          <View className={styles.resultHeader}>
+            <View className={styles.resultIcon}>✓</View>
+            <Text className={styles.resultTitle}>对账完成汇总</Text>
+            <Text className={styles.resultTime}>{lastReconciliation.runAt}</Text>
+          </View>
+          <View className={styles.resultStats}>
+            <View className={styles.resultStatItem}>
+              <Text className={[styles.resultStatValue, styles.newValue].join(' ')}>
+                {lastReconciliation.newDiscrepancies}
+              </Text>
+              <Text className={styles.resultStatLabel}>本次新增差异</Text>
+            </View>
+            <View className={styles.resultStatItem}>
+              <Text className={[styles.resultStatValue, styles.resolvedValue].join(' ')}>
+                {lastReconciliation.resolvedDiscrepancies}
+              </Text>
+              <Text className={styles.resultStatLabel}>累计已处理</Text>
+            </View>
+            <View className={styles.resultStatItem}>
+              <Text className={[styles.resultStatValue, styles.planValue].join(' ')}>
+                {lastReconciliation.pendingPlans}
+              </Text>
+              <Text className={styles.resultStatLabel}>待审批方案</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
       <View className={styles.tabs}>
         <View
           className={[styles.tab, activeTab === 'discrepancy' && styles.activeTab].join(' ')}
@@ -128,7 +259,10 @@ const ReconciliationPage: React.FC = () => {
       {activeTab === 'discrepancy' && (
         <View className={styles.discrepancyList}>
           <View className={styles.listHeader}>
-            <Text className={styles.listTitle}>待处理差异</Text>
+            <Text className={styles.listTitle}>
+              待处理差异
+              {reconcileFilters.month || reconcileFilters.teamId || reconcileFilters.type ? ' (已筛选)' : ''}
+            </Text>
             <Text className={styles.viewAll} onClick={handleViewAllDiscrepancies}>
               查看全部
             </Text>
@@ -140,7 +274,12 @@ const ReconciliationPage: React.FC = () => {
           ) : (
             <View className={styles.emptyState}>
               <Text className={styles.emptyIcon}>✅</Text>
-              <Text className={styles.emptyText}>暂无待处理差异</Text>
+              <Text className={styles.emptyText}>
+                {reconcileFilters.month || reconcileFilters.teamId || reconcileFilters.type
+                  ? '当前筛选条件下暂无差异'
+                  : '暂无待处理差异'
+                }
+              </Text>
             </View>
           )}
         </View>

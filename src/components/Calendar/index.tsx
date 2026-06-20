@@ -61,8 +61,14 @@ const Calendar: React.FC<CalendarProps> = ({
       });
 
       let status: CalendarDay['status'] = 'free';
+      let hasConflict = false;
       if (daySchedules.length > 0) {
-        status = 'occupied';
+        hasConflict = daySchedules.some(s => s.isConflict);
+        if (hasConflict) {
+          status = 'conflict';
+        } else {
+          status = 'occupied';
+        }
       }
 
       days.push({
@@ -73,6 +79,7 @@ const Calendar: React.FC<CalendarProps> = ({
         isCurrentMonth: true,
         isToday: isToday(dateStr),
         schedules: daySchedules,
+        hasConflict,
         status
       });
     }
@@ -137,7 +144,8 @@ const Calendar: React.FC<CalendarProps> = ({
               !day.isCurrentMonth && styles.otherMonth,
               day.isToday && styles.today,
               day.status === 'occupied' && styles.occupied,
-              day.status === 'partial' && styles.partial
+              day.status === 'partial' && styles.partial,
+              day.status === 'conflict' && styles.conflict
             ].filter(Boolean).join(' ')}
             onClick={() => handleDateClick(day.date)}
           >
@@ -149,7 +157,8 @@ const Calendar: React.FC<CalendarProps> = ({
                     key={i}
                     className={[
                       styles.dot,
-                      s.isMerged && styles.mergedDot
+                      s.isMerged && styles.mergedDot,
+                      s.isConflict && styles.conflictDot
                     ].filter(Boolean).join(' ')}
                   />
                 ))}

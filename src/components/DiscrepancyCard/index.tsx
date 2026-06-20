@@ -20,12 +20,13 @@ const DiscrepancyCard: React.FC<DiscrepancyCardProps> = ({ discrepancy, onClick 
 
   const statusMap = {
     pending: { text: '待处理', color: '#FF7D00', bg: 'rgba(255, 125, 0, 0.1)' },
+    processing: { text: '处理中(待审批)', color: '#165DFF', bg: 'rgba(22, 93, 255, 0.1)' },
     resolved: { text: '已处理', color: '#00B42A', bg: 'rgba(0, 180, 42, 0.1)' },
     approved: { text: '已审批', color: '#165DFF', bg: 'rgba(22, 93, 255, 0.1)' }
   };
 
   const type = typeMap[discrepancy.type];
-  const status = statusMap[discrepancy.status];
+  const status = statusMap[discrepancy.status] || statusMap.pending;
 
   const handleClick = () => {
     if (onClick) {

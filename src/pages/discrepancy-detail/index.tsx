@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro, { useRouter, useDidShow } from '@tarojs/taro';
 import { useAppStore } from '@/store';
-import { Discrepancy, Transaction, ExecutionPlan } from '@/types';
+import { Discrepancy, Transaction, ExecutionPlan, ProcessRecord } from '@/types';
 import { formatMoney } from '@/utils/date';
 import styles from './index.module.scss';
 
@@ -54,8 +54,17 @@ const DiscrepancyDetailPage: React.FC = () => {
 
   const statusMap = {
     pending: { text: '待处理', className: styles.pending, icon: '○' },
+    processing: { text: '处理中(待审批)', className: styles.processing, icon: '●' },
     resolved: { text: '已处理', className: styles.resolved, icon: '✓' },
     approved: { text: '已审批', className: styles.approved, icon: '✓' }
+  };
+
+  const stepMap: Record<ProcessRecord['step'], { text: string; className: string }> = {
+    created: { text: '差异发现', className: styles.timelineDotCreated },
+    plan_created: { text: '创建执行方案', className: styles.timelineDotPlan },
+    approved: { text: '方案审批通过', className: styles.timelineDotApproved },
+    rejected: { text: '方案审批拒绝', className: styles.timelineDotRejected },
+    resolved: { text: '差异已解决', className: styles.timelineDotResolved }
   };
 
   const handleMarkResolved = () => {
@@ -111,7 +120,7 @@ const DiscrepancyDetailPage: React.FC = () => {
                       amount,
                       proposer: currentUser.name
                     });
-                    Taro.showToast({ title: '方案已创建', icon: 'success' });
+                    Taro.showToast({ title: '方案已创建，进入待审批', icon: 'success' });
                   }
                 }
               });
@@ -154,7 +163,8 @@ const DiscrepancyDetailPage: React.FC = () => {
   }
 
   const type = typeMap[discrepancy.type];
-  const status = statusMap[discrepancy.status];
+  const status = statusMap[discrepancy.status] || statusMap.pending;
+  const processRecords = discrepancy.processRecords || [];
 
   return (
     <ScrollView scrollY className={styles.page}>
@@ -248,6 +258,11 @@ const DiscrepancyDetailPage: React.FC = () => {
               请尽快核实差异原因，确认处理方案
             </Text>
           )}
+          {discrepancy.status === 'processing' && (
+            <Text className={styles.handleInfo}>
+              已创建执行方案，等待审批中
+            </Text>
+          )}
 
           {discrepancy.handler && (
             <View className={styles.handleInfo}>
@@ -267,8 +282,8 @@ const DiscrepancyDetailPage: React.FC = () => {
 
           {discrepancy.approvalStatus && (
             <View className={styles.statusBadgeRow} style={{ marginTop: '16rpx' }}>
-              <View className={[styles.statusIcon, discrepancy.approvalStatus === 'approved' ? styles.approved : styles.pending].join(' ')}>
-                <Text>{discrepancy.approvalStatus === 'approved' ? '✓' : '○'}</Text>
+              <View className={[styles.statusIcon, discrepancy.approvalStatus === 'approved' ? styles.approved : (discrepancy.approvalStatus === 'rejected' ? styles.resolved : styles.pending)].join(' ')}>
+                <Text>{discrepancy.approvalStatus === 'approved' ? '✓' : (discrepancy.approvalStatus === 'rejected' ? '✕' : '○')}</Text>
               </View>
               <Text className={styles.statusText}>
                 审批状态：{discrepancy.approvalStatus === 'approved' ? '已通过' : discrepancy.approvalStatus === 'rejected' ? '已拒绝' : '待审批'}
@@ -292,15 +307,39 @@ const DiscrepancyDetailPage: React.FC = () => {
             </View>
           </View>
         )}
+
+        {processRecords.length > 0 && (
+          <View className={styles.processTimeline}>
+            <Text className={styles.sectionTitle} style={{ marginBottom: '16rpx' }}>处理记录</Text>
+            <View className={styles.timelineList}>
+              {processRecords.map((record, index) => {
+                const step = stepMap[record.step] || stepMap.created;
+                return (
+                  <View key={index} className={styles.timelineItem}>
+                    <View className={[styles.timelineDot, step.className].join(' ')} />
+                    <View className={styles.timelineContent}>
+                      <View className={styles.timelineHeader}>
+                        <Text className={styles.timelineStep}>{step.text}</Text>
+                        <Text className={styles.timelineTime}>{record.time}</Text>
+                      </View>
+                      <Text className={styles.timelineOperator}>操作人：{record.operator}</Text>
+                      <Text className={styles.timelineRemark}>{record.remark}</Text>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
       </View>
 
-      {discrepancy.status === 'pending' && (
+      {(discrepancy.status === 'pending' || discrepancy.status === 'processing') && (
         <View className={styles.actionBar}>
           <View className={[styles.actionBtn, styles.secondaryBtn].join(' ')} onClick={handleMarkResolved}>
             标记已解决
           </View>
           <View className={[styles.actionBtn, styles.primaryBtn].join(' ')} onClick={handleCreatePlan}>
-            创建方案
+            {discrepancy.status === 'processing' ? '重新创建方案' : '创建方案'}
           </View>
         </View>
       )}

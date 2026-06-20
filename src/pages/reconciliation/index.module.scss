@@ -241,3 +241,131 @@
   color: $color-text-primary;
   font-weight: $font-weight-medium;
 }
+
+.filterSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.filterLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  width: 140rpx;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.filterChips {
+  flex: 1;
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-button;
+  background: $color-bg-hover;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border: 1px solid transparent;
+  transition: all $transition-fast;
+}
+
+.activeChip {
+  background: rgba(212, 56, 60, 0.1);
+  color: $color-primary;
+  border-color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.reconcileResult {
+  background: linear-gradient(135deg, rgba(0, 180, 42, 0.08) 0%, rgba(0, 180, 42, 0.02) 100%);
+  border: 2rpx solid rgba(0, 180, 42, 0.3);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.resultIcon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: $color-success;
+  color: $color-text-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+}
+
+.resultTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-success;
+}
+
+.resultTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-left: auto;
+}
+
+.resultStats {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.resultStatItem {
+  flex: 1;
+  text-align: center;
+  padding: $spacing-sm;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+}
+
+.resultStatValue {
+  display: block;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  margin-bottom: 4rpx;
+}
+
+.resultStatLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.newValue {
+  color: $color-error;
+}
+
+.resolvedValue {
+  color: $color-success;
+}
+
+.planValue {
+  color: $color-warning;
+}

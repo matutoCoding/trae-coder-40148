@@ -148,6 +148,10 @@ const SchedulePage: React.FC = () => {
           <View className={[styles.legendDot, styles.merged].join(' ')} />
           <Text className={styles.legendText}>连订</Text>
         </View>
+        <View className={styles.legendItem}>
+          <View className={[styles.legendDot, styles.conflict].join(' ')} />
+          <Text className={styles.legendText}>冲突</Text>
+        </View>
       </View>
 
       <View className={styles.calendarSection}>

@@ -111,6 +111,20 @@
   }
 }
 
+.conflict {
+  background: rgba(245, 63, 63, 0.15);
+  border: 2rpx solid rgba(245, 63, 63, 0.4);
+
+  .dayNumber {
+    color: $color-error;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.conflictDot {
+  background: $color-error;
+}
+
 .scheduleDots {
   display: flex;
   gap: 4rpx;

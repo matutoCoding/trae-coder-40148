@@ -138,9 +138,24 @@ const ScheduleDetailPage: React.FC = () => {
             {groupSchedules.map(s => (
               <Text key={s.id} style={{ display: 'block', fontSize: '24rpx', color: '#86909C', marginTop: '4rpx' }}>
                 • {s.date} {s.status === 'cancelled' ? '(已取消)' : ''}
+                {s.isConflict && <Text style={{ color: '#F53F3F' }}>  ⚠ 冲突</Text>}
               </Text>
             ))}
           </View>
+        </View>
+      )}
+
+      {schedule.isConflict && (
+        <View className={styles.conflictInfo}>
+          <Text className={styles.conflictTitle}>⚠ 档期冲突提醒</Text>
+          <Text className={styles.conflictDesc}>
+            本档期与其他新人档期重叠，请及时协调更换日期或团队。
+          </Text>
+          {schedule.conflictSchedules && schedule.conflictSchedules.length > 0 && (
+            <Text className={styles.conflictDesc} style={{ marginTop: '8rpx' }}>
+              冲突档期数量：{schedule.conflictSchedules.length} 条
+            </Text>
+          )}
         </View>
       )}
 

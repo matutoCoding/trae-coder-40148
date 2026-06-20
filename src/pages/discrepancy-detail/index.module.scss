@@ -261,3 +261,96 @@
   background: $color-bg-hover;
   color: $color-text-secondary;
 }
+
+.processing {
+  background: #165DFF;
+}
+
+.processTimeline {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+}
+
+.timelineList {
+  position: relative;
+  padding-left: 32rpx;
+}
+
+.timelineItem {
+  position: relative;
+  padding-bottom: $spacing-lg;
+  padding-left: $spacing-md;
+  border-left: 2rpx solid $color-divider;
+
+  &:last-child {
+    border-left-color: transparent;
+    padding-bottom: 0;
+  }
+}
+
+.timelineDot {
+  position: absolute;
+  left: -14rpx;
+  top: 0;
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background: $color-primary;
+  border: 4rpx solid $color-bg-card;
+}
+
+.timelineDotCreated {
+  background: #7B61FF;
+}
+
+.timelineDotPlan {
+  background: #165DFF;
+}
+
+.timelineDotApproved {
+  background: $color-success;
+}
+
+.timelineDotRejected {
+  background: $color-error;
+}
+
+.timelineDotResolved {
+  background: $color-success;
+}
+
+.timelineContent {
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+}
+
+.timelineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4rpx;
+}
+
+.timelineStep {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.timelineTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.timelineOperator {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  margin-bottom: 4rpx;
+}
+
+.timelineRemark {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
