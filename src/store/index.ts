@@ -288,8 +288,8 @@ export const useAppStore = create<AppState>((set, get) => ({
 
       const finalSchedules = merged.map(s => ({
         ...s,
-        isConflict: allowConflict ? false : conflictScheduleIds.has(s.id),
-        conflictSchedules: allowConflict ? undefined : conflictMap.get(s.id)
+        isConflict: conflictScheduleIds.has(s.id),
+        conflictSchedules: conflictMap.get(s.id)
       }));
 
       return { schedules: finalSchedules };
@@ -484,8 +484,41 @@ export const useAppStore = create<AppState>((set, get) => ({
         return !existingKeys.has(key);
       });
 
-      summary.newDiscrepancies = uniqueNew.length;
-      summary.newDiscrepancyIds = uniqueNew.map(d => d.id);
+      summary.newDiscrepancies = (() => {
+        if (!reconcileFilters.month && !reconcileFilters.teamId && !reconcileFilters.type) {
+          return uniqueNew.length;
+        }
+        return uniqueNew.filter(d => {
+          if (reconcileFilters.month && !d.date.startsWith(reconcileFilters.month)) return false;
+          if (reconcileFilters.type && d.type !== reconcileFilters.type) return false;
+          if (reconcileFilters.teamId) {
+            const pTx = transactions.find(t => t.id === d.platformTransactionId);
+            const tTx = d.teamTransactionId ? transactions.find(t => t.id === d.teamTransactionId) : null;
+            if (!(pTx && pTx.teamId === reconcileFilters.teamId) &&
+                !(tTx && tTx.teamId === reconcileFilters.teamId)) return false;
+          }
+          return true;
+        }).length;
+      })();
+
+      summary.newDiscrepancyIds = (() => {
+        const allIds = uniqueNew.map(d => d.id);
+        if (!reconcileFilters.month && !reconcileFilters.teamId && !reconcileFilters.type) {
+          return allIds;
+        }
+        return uniqueNew.filter(d => {
+          if (reconcileFilters.month && !d.date.startsWith(reconcileFilters.month)) return false;
+          if (reconcileFilters.type && d.type !== reconcileFilters.type) return false;
+          if (reconcileFilters.teamId) {
+            const pTx = transactions.find(t => t.id === d.platformTransactionId);
+            const tTx = d.teamTransactionId ? transactions.find(t => t.id === d.teamTransactionId) : null;
+            if (!(pTx && pTx.teamId === reconcileFilters.teamId) &&
+                !(tTx && tTx.teamId === reconcileFilters.teamId)) return false;
+          }
+          return true;
+        }).map(d => d.id);
+      })();
+
       summary.resolvedDiscrepancies = discrepancies.filter(d => d.status === 'resolved' || d.status === 'approved').length;
       summary.pendingPlans = executionPlans.filter(p => p.status === 'pending').length;
 
@@ -550,26 +583,31 @@ export const useAppStore = create<AppState>((set, get) => ({
     const typeLabel = type === 'refund' ? '退款' : type === 'supplement' ? '补缴' : '调整';
 
     set(state => {
-      const newPlans: ExecutionPlan[] = discrepancyIds.map((id, idx) => ({
-        id: `plan_${Date.now()}_${idx}`,
-        discrepancyId: id,
-        title,
-        description,
-        type,
-        amount,
-        proposer: currentUser.name,
-        status: 'pending',
-        createdAt: formatDate(new Date())
-      }));
+      const newPlans: ExecutionPlan[] = discrepancyIds.map((id, idx) => {
+        const disc = state.discrepancies.find(d => d.id === id);
+        return {
+          id: `plan_${Date.now()}_${idx}`,
+          discrepancyId: id,
+          title,
+          description,
+          type,
+          amount: disc ? disc.diffAmount : amount,
+          proposer: currentUser.name,
+          status: 'pending',
+          createdAt: formatDate(new Date())
+        };
+      });
 
       const updatedDiscrepancies = state.discrepancies.map(d => {
         if (!discrepancyIds.includes(d.id)) return d;
         const prevRecords = d.processRecords || [];
+        const plan = newPlans.find(p => p.discrepancyId === d.id);
+        const amountText = plan ? `（金额${formatMoney(plan.amount)}）` : '';
         return {
           ...d,
           status: 'processing',
           approvalStatus: 'pending',
-          processRecords: [...prevRecords, buildProcessRecord('plan_created', currentUser.name, `批量创建${typeLabel}方案：${title}`)]
+          processRecords: [...prevRecords, buildProcessRecord('plan_created', currentUser.name, `批量创建${typeLabel}方案：${title}${amountText}`)]
         };
       });
 

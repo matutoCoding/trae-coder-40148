@@ -110,6 +110,16 @@ const ReconciliationPage: React.FC = () => {
     return discrepancyTab === 'pending' && selectedDiscrepancyIds.length > 0;
   }, [discrepancyTab, selectedDiscrepancyIds]);
 
+  const filteredStats = useMemo(() => {
+    const list = filteredDiscrepancies;
+    return {
+      total: list.length,
+      pending: list.filter(d => d.status === 'pending').length,
+      processing: list.filter(d => d.status === 'processing').length,
+      resolved: list.filter(d => d.status === 'resolved' || d.status === 'approved').length
+    };
+  }, [filteredDiscrepancies]);
+
   const platformTransactions = useMemo(() => {
     return transactions.filter(t => t.type === 'platform').slice(0, 5);
   }, [transactions]);
@@ -185,8 +195,6 @@ const ReconciliationPage: React.FC = () => {
       Taro.showToast({ title: '请先选择差异项', icon: 'none' });
       return;
     }
-    const totalDiff = selectedAmountDiscrepancies.reduce((sum, d) => sum + d.diffAmount, 0);
-    setBatchPlanAmount(String(totalDiff));
     setBatchPlanTitle('批量补缴方案');
     setBatchPlanDesc('');
     setBatchModalVisible(true);
@@ -201,17 +209,14 @@ const ReconciliationPage: React.FC = () => {
       Taro.showToast({ title: '请输入方案标题', icon: 'none' });
       return;
     }
-    if (!batchPlanAmount || Number(batchPlanAmount) <= 0) {
-      Taro.showToast({ title: '请输入有效金额', icon: 'none' });
-      return;
-    }
+    const totalDiff = selectedAmountDiscrepancies.reduce((sum, d) => sum + d.diffAmount, 0);
 
     batchCreateExecutionPlans({
       discrepancyIds: selectedDiscrepancyIds,
       type: batchPlanType,
       title: batchPlanTitle,
       description: batchPlanDesc,
-      amount: Number(batchPlanAmount)
+      amount: totalDiff
     });
 
     Taro.showToast({ title: `已批量创建${selectedDiscrepancyIds.length}个方案`, icon: 'success' });
@@ -378,7 +383,7 @@ const ReconciliationPage: React.FC = () => {
           className={[styles.tab, activeTab === 'discrepancy' && styles.activeTab].join(' ')}
           onClick={() => setActiveTab('discrepancy')}
         >
-          差异项 ({stats.discrepancy})
+          差异项 ({filteredStats.total})
         </View>
         <View
           className={[styles.tab, activeTab === 'platform' && styles.activeTab].join(' ')}
@@ -401,19 +406,19 @@ const ReconciliationPage: React.FC = () => {
               className={[styles.subTab, discrepancyTab === 'pending' && styles.activeSubTab].join(' ')}
               onClick={() => handleDiscrepancyTabChange('pending')}
             >
-              待处理 ({stats.pending})
+              待处理 ({filteredStats.pending})
             </View>
             <View
               className={[styles.subTab, discrepancyTab === 'processing' && styles.activeSubTab].join(' ')}
               onClick={() => handleDiscrepancyTabChange('processing')}
             >
-              待审批 ({stats.processing})
+              待审批 ({filteredStats.processing})
             </View>
             <View
               className={[styles.subTab, discrepancyTab === 'resolved' && styles.activeSubTab].join(' ')}
               onClick={() => handleDiscrepancyTabChange('resolved')}
             >
-              已处理 ({stats.resolved})
+              已处理 ({filteredStats.resolved})
             </View>
           </View>
 
@@ -579,14 +584,31 @@ const ReconciliationPage: React.FC = () => {
             </View>
 
             <View className={styles.formGroup}>
-              <Text className={styles.formLabel}>方案金额 (元)</Text>
-              <Input
-                className={styles.formInput}
-                type="digit"
-                placeholder="请输入金额"
-                value={batchPlanAmount}
-                onInput={e => setBatchPlanAmount(e.detail.value)}
-              />
+              <Text className={styles.formLabel}>
+                已选 {selectedDiscrepancyIds.length} 条金额差异
+              </Text>
+              <Text className={styles.formLabel} style={{ marginTop: '8rpx', color: '#7B61FF' }}>
+                方案金额按每条差异的差额自动分配
+              </Text>
+              <Text className={styles.formLabel} style={{ marginTop: '8rpx' }}>
+                差额总计：{formatMoney(selectedAmountDiscrepancies.reduce((s, d) => s + d.diffAmount, 0))}
+              </Text>
+            </View>
+
+            <View className={styles.formGroup}>
+              <Text className={styles.formLabel}>明细（各差异对应方案金额）</Text>
+              <View className={styles.resultList}>
+                {selectedAmountDiscrepancies.map(d => (
+                  <View key={d.id} className={styles.resultItem}>
+                    <Text className={styles.resultItemDesc} numberOfLines={1}>
+                      {d.description}
+                    </Text>
+                    <View className={[styles.resultItemTag, styles.tagAmount].join(' ')}>
+                      {formatMoney(d.diffAmount)}
+                    </View>
+                  </View>
+                ))}
+              </View>
             </View>
 
             <View className={styles.formGroup}>
@@ -597,12 +619,6 @@ const ReconciliationPage: React.FC = () => {
                 value={batchPlanDesc}
                 onInput={e => setBatchPlanDesc(e.detail.value)}
               />
-            </View>
-
-            <View className={styles.formGroup}>
-              <Text className={styles.formLabel}>
-                已选 {selectedDiscrepancyIds.length} 条金额差异，共 {formatMoney(selectedAmountDiscrepancies.reduce((s, d) => s + d.diffAmount, 0))}
-              </Text>
             </View>
 
             <View className={styles.modalActions}>
